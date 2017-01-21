@@ -193,4 +193,4 @@ async def on_message(message):
 #    print("something changed")
 #    print(after.voice)
 
-client.run("MTk1MjM2OTU1MDc4OTE4MTQ0.CzBuEw.crm44AZBOyOYVO8EYegLEf2nGKg", bot=True)
+client.run("TOKEN_PLS", bot=True)
