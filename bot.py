@@ -9,7 +9,7 @@ import sys
 
 client = discord.Client()
 
-files = glob.glob("*.mp3")
+files = glob.glob("Sound Effects/*.mp3")
 
 @client.event
 async def on_ready():
@@ -69,7 +69,10 @@ async def on_message(message):
         await client.delete_message(message)
         await asyncio.sleep(15)
         await client.delete_message(hlp)
-        
+
+    elif message.content == '/shrug':
+        await client.send_message(message.channel,'¯\_(ツ)_/¯')
+        await client.delete_message(message)
 
     elif '/p2g' in message.content and message.author != client.user:
         god = message.content.split(' ', 2)[1].strip()
@@ -78,15 +81,15 @@ async def on_message(message):
         if (message.content.split(' ', 2)[1].strip()).capitalize() != 'Khorne' or (message.content.split(' ', 2)[1].strip()).capitalize() != 'Slaanesh' or (message.content.split(' ', 2)[1].strip()).capitalize() != 'Tzeentch' or (message.content.split(' ', 2)[1].strip()).capitalize() != 'Nurgle':
             #first part of name:
             nameloc1 = random.randint(0,35)
-            f = open('p2g names.txt', 'r')
+            f = open('P2G/p2g names.txt', 'r')
             name1 = f.read().splitlines()
             f.close
             #Second part of name:
-            f = open('p2g names 2.txt', 'r')
+            f = open('P2G/p2g names 2.txt', 'r')
             name2 = f.read().splitlines()
             f.close
             #Title:
-            p = open('p2g titles.txt', 'r')
+            p = open('P2G/p2g titles.txt', 'r')
             lineno = p.read().splitlines()
  
             if god.capitalize() == 'Khorne':
@@ -112,7 +115,7 @@ async def on_message(message):
 
             temp = ('You have ', str(unitquant), ' units in your warband:')       
             await client.send_message(message.channel,"".join(temp))
-            f = open('Units.txt', 'r')
+            f = open('P2G/Units.txt', 'r')
             unit = f.read().splitlines()
             x = 0
             while x < unitquant:
