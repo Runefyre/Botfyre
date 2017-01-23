@@ -73,7 +73,14 @@ async def on_message(message):
     elif message.content == '/shrug':
         await client.send_message(message.channel,'¯\_(ツ)_/¯')
         await client.delete_message(message)
-
+        
+    elif '/quote' in message.content and message.author != client.user:
+        quote = message.content.split(' ', 1)[1].strip()
+        f = open('quotes.txt', 'w')
+        f.write('\n'+quote)
+        await client.send_message(message.channel,'Quote "'+quote+'" added')
+        await client.delete_message(message)
+       
     elif '/p2g' in message.content and message.author != client.user:
         god = message.content.split(' ', 2)[1].strip()
         relic = message.content.split(' ', 2)[2].strip()
