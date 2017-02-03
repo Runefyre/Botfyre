@@ -1,4 +1,3 @@
-
 import asyncio
 import discord
 import random
@@ -6,10 +5,14 @@ import glob
 import time
 import random
 import sys
+                #mod                 #admin
+admin_roles = ["MODERATOR_ID","ADMIN_ID"]
 
 client = discord.Client()
 
 files = glob.glob("Sound Effects/*.mp3")
+
+c = 1
 
 @client.event
 async def on_ready():
@@ -24,8 +27,12 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    client.wait_until_ready()
+
+    if message.author == client.user:
+        return
     
-    if message.content == '/summ':
+    elif message.content == '/summ':
         if client.voice:
             await client.voice.disconnect()
             client.voice = None
@@ -73,15 +80,30 @@ async def on_message(message):
     elif message.content == '/shrug':
         await client.send_message(message.channel,'¯\_(ツ)_/¯')
         await client.delete_message(message)
+
+    
         
-    elif '/quote' in message.content and message.author != client.user:
-        quote = message.content.split(' ', 1)[1].strip()
-        f = open('quotes.txt', 'w')
-        f.write('\n'+quote)
-        await client.send_message(message.channel,'Quote "'+quote+'" added')
+    elif '/quote' in message.content:
         await client.delete_message(message)
-       
-    elif '/p2g' in message.content and message.author != client.user:
+        await client.send_message(message.channel,"`/quote` is currently unavailable.")
+        #if is_admin(message.author) or is_mod(message.author):
+            #can't force to add an author until SQL implementation
+            #try:
+                #quote = message.content.split(' ',2)[1].strip()
+                #global c
+                #with open('quotes.txt', 'a') as f:
+                    #f.write(str(c)+'. '+quote+'\n')
+                    #c += 1
+                #await client.send_message(message.channel,'Quote "'+quote+'" added')
+            #except Exception as e:
+                #rquote = 'Stuff and Things'
+                #f = open('quotes.txt', 'r')
+                #rquote = f.read().splitlines()
+                #f.close()
+                #await client.send_message(message.channel, 'Quotes: ```' + '\n'.join(rquote) + '```')
+        #else:
+            #await client.send_message(message.channel,"`/quote` is only available to Moderator and above to prevent abuse (though it'll probably happen anyway)")
+    elif '/p2g' in message.content:
         god = message.content.split(' ', 2)[1].strip()
         relic = message.content.split(' ', 2)[2].strip()
 
@@ -90,11 +112,11 @@ async def on_message(message):
             nameloc1 = random.randint(0,35)
             f = open('P2G/p2g names.txt', 'r')
             name1 = f.read().splitlines()
-            f.close
+            f.close()
             #Second part of name:
             f = open('P2G/p2g names 2.txt', 'r')
             name2 = f.read().splitlines()
-            f.close
+            f.close()
             #Title:
             p = open('P2G/p2g titles.txt', 'r')
             lineno = p.read().splitlines()
@@ -109,7 +131,7 @@ async def on_message(message):
                 Title = lineno[random.randint(148, 183)]
             else:
                 Title = lineno[random.randint(0, 35)]
-            p.close
+            p.close()
             temp = ('Your leader is ', name1[random.randint(0, 35)],name2[random.randint(0, 35)],' ', Title, ', Chaos Lord of ', god.capitalize())
             await client.send_message(message.channel,"".join(temp))
 
@@ -164,11 +186,11 @@ async def on_message(message):
                     f = open('p2g names.txt', 'r')
                     name1 = f.read().splitlines()
      
-                    f.close
+                    f.close()
                     #Second part of name:
                     f = open('p2g names 2.txt', 'r')
                     name2 = f.read().splitlines()
-                    f.close
+                    f.close()
                     #Title:
                     p = open('p2g titles.txt', 'r')
                     lineno = p.read().splitlines()
@@ -183,7 +205,7 @@ async def on_message(message):
                         Title = lineno[random.randint(148, 183)]
                     else:
                         Title = lineno[random.randint(0, 35)]
-                    p.close
+                    p.close()
             
                     hero = unit[random.randint(44, 49)]
                     if hero != 'An Aspiring Follower':
@@ -194,6 +216,29 @@ async def on_message(message):
                         await client.send_message(message.channel,"".join(temp))
                         
             await client.delete_message(message)
+
+    ### Sound files playing on certain words ###
+
+    elif 'gay' in message.content:
+        if not client.voice:
+            for chan in message.server.channels:
+                if chan.type == discord.ChannelType.voice and message.author in chan.voice_members:
+                    client.voice = await client.join_voice_channel(chan)
+
+        if client.voice:
+            player = client.voice.create_ffmpeg_player('Sound Effects/Hah_Gay.mp3')
+            player.volume = 0.5
+            player.start()
+            time.sleep(5)
+            await client.voice.disconnect()
+            client.voice = None
+
+
+#utility
+def is_admin(member):
+    return 'ADMIN' in [x.id for x in member.roles] 
+def is_mod(member):
+    return 'MODERATOR' in [x.id for x in member.roles]
 
 #@client.event
 #async def on_voice_state_update(before,after):
